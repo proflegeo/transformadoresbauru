@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Gestão 2.0 | Transformadores Bauru</title>
+    <title>Gestão Integrada | Transformadores Bauru</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -18,181 +18,135 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
 
-        /* Header e Menu de Abas */
         header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
         header h1 { font-size: 1.5rem; font-weight: 600; }
         header span { color: var(--secondary-color); font-weight: 700; }
 
-        .tabs { display: flex; gap: 1rem; margin-top: 1rem; max-width: 1200px; margin: 1rem auto 0; padding: 0 2rem; }
-        .tab-btn { background: transparent; color: rgba(255,255,255,0.7); border: none; padding: 0.5rem 1rem; font-size: 1rem; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; }
-        .tab-btn:hover { color: white; }
-        .tab-btn.active { color: white; border-bottom: 3px solid var(--secondary-color); }
-
-        /* Container Principal */
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; width: 100%; }
-        .tab-content { display: none; animation: fadeIn 0.3s ease-in; }
-        .tab-content.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; width: 100%; }
         .card { background: var(--surface-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--primary-color); border-bottom: 2px solid var(--bg-color); padding-bottom: 0.5rem; }
 
-        /* Formulário */
         .form-group { margin-bottom: 1.25rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
-        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; transition: 0.3s; }
         input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-
-        /* Upload de Arquivo */
-        .file-upload-wrapper { border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center; border-radius: 6px; background-color: #FAFAFA; cursor: pointer; transition: border 0.3s; }
-        .file-upload-wrapper:hover { border-color: var(--primary-color); }
-        .file-upload-wrapper input[type="file"] { display: none; }
-        .file-upload-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
 
         button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem; transition: background 0.3s; }
         button.btn-primary:hover { background-color: #0c3e69; }
+        button:disabled { background-color: #9fb3c4; cursor: not-allowed; }
 
         .alert { display: none; padding: 1rem; border-radius: 6px; margin-top: 1rem; text-align: center; font-weight: 500; }
         .alert.success { display: block; background-color: #E8F5E9; color: #2E7D32; }
+        .alert.error { display: block; background-color: #FFEBEE; color: #C62828; }
 
-        /* Placeholder para telas em construção */
-        .em-construcao { text-align: center; padding: 3rem; color: #666; }
+        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
+
+    <!-- Tela de carregamento enquanto busca os dados da planilha -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Sincronizando com o Banco de Dados...</p>
+    </div>
 
     <header>
         <div class="header-content">
             <h1>Transformadores<span>Bauru</span></h1>
             <p style="font-size: 0.9rem; opacity: 0.8;">Sistema de Gestão Interna</p>
         </div>
-        <div class="tabs">
-            <button class="tab-btn active" onclick="abrirAba('aba-registro', this)">Novo Registro</button>
-            <button class="tab-btn" onclick="abrirAba('aba-retorno', this)">Retornos Pendentes</button>
-            <button class="tab-btn" onclick="abrirAba('aba-relatorios', this)">Relatórios</button>
-        </div>
     </header>
 
     <div class="container">
-        
-        <!-- ABA 1: NOVO REGISTRO -->
-        <div id="aba-registro" class="tab-content active">
-            <div class="card">
-                <h2>Registrar Orçamento ou Serviço</h2>
-                <form id="form-servico">
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label for="numero">Número do Pedido (OS)</label>
-                            <input type="text" id="numero" required placeholder="Ex: OS-2024">
-                        </div>
-                        <div class="form-group">
-                            <label for="cliente">Cliente / Empresa</label>
-                            <input type="text" id="cliente" required placeholder="Ex: Indústria XYZ">
-                        </div>
-                    </div>
-
+        <div class="card">
+            <h2>Novo Registro</h2>
+            <form id="form-servico">
+                <div class="grid-2">
                     <div class="form-group">
-                        <label for="servico">Descrição do Serviço (Selecione ou digite)</label>
-                        <!-- DATALIST: Sugere serviços padrão, mas permite digitar novos -->
-                        <input list="lista-servicos" id="servico" required placeholder="Ex: Manutenção Preventiva...">
-                        <datalist id="lista-servicos">
-                            <option value="Manutenção Preventiva - Trafo">
-                            <option value="Manutenção Corretiva - Trafo">
-                            <option value="Troca de Óleo Isolante">
-                            <option value="Ensaio de Tensão Aplicada">
-                            <option value="Rebobinamento">
-                        </datalist>
+                        <label for="numero">Número do Pedido (OS/Orçamento)</label>
+                        <input type="text" id="numero" required placeholder="Ex: OS-1005">
                     </div>
-
-                    <div class="grid-2">
-                        <div class="form-group">
-                            <label for="valor">Valor Total (R$)</label>
-                            <input type="number" step="0.01" id="valor" required placeholder="0.00">
-                        </div>
-                        <div class="form-group">
-                            <label for="condicao">Condição de Pagamento</label>
-                            <select id="condicao" required>
-                                <option value="">Selecione...</option>
-                                <option value="À Vista">À Vista (Pix/Transferência)</option>
-                                <option value="Boleto 30 Dias">Boleto 30 Dias</option>
-                                <option value="Boleto 30/60/90 Dias">Boleto 30/60/90 Dias</option>
-                                <option value="Faturamento">Faturamento Mensal</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- PREPARO PARA O UPLOAD DE FOTO -->
                     <div class="form-group">
-                        <label>Registro Fotográfico (Opcional)</label>
-                        <label class="file-upload-wrapper" for="foto">
-                            <span class="file-upload-icon">📷</span>
-                            <span id="nome-arquivo">Clique para anexar foto do serviço ou prancheta</span>
-                            <input type="file" id="foto" accept="image/*" onchange="atualizarNomeArquivo()">
-                        </label>
+                        <label for="cliente">Nome do Cliente / Empresa</label>
+                        <input type="text" id="cliente" required placeholder="Ex: Indústria XYZ">
                     </div>
-
-                    <button type="submit" class="btn-primary" id="btn-submit">Salvar Registro no Banco de Dados</button>
-                    <div id="mensagem" class="alert"></div>
-                </form>
-            </div>
-        </div>
-
-        <!-- ABA 2: RETORNOS PENDENTES -->
-        <div id="aba-retorno" class="tab-content">
-            <div class="card">
-                <h2>Clientes para Contato (Pós-Venda)</h2>
-                <div class="em-construcao">
-                    <h3>🚧 Módulo em Desenvolvimento</h3>
-                    <p>Aqui o sistema listará automaticamente os clientes que fizeram serviço há mais de 11 meses, alertando a equipe para oferecer revisões e manutenções preventivas.</p>
                 </div>
-            </div>
-        </div>
 
-        <!-- ABA 3: RELATÓRIOS -->
-        <div id="aba-relatorios" class="tab-content">
-            <div class="card">
-                <h2>Dashboards e Relatórios</h2>
-                <div class="em-construcao">
-                    <h3>🚧 Integração com Data Studio</h3>
-                    <p>Aqui incorporaremos gráficos dinâmicos mostrando Faturamento Mensal, Serviços mais Realizados e Clientes Ativos.</p>
+                <div class="form-group">
+                    <label for="servico">Serviço (Selecione ou digite um novo)</label>
+                    <input list="lista-servicos" id="servico" required placeholder="Selecione ou digite o serviço...">
+                    <!-- Essa lista será preenchida automaticamente pelo JavaScript -->
+                    <datalist id="lista-servicos"></datalist>
                 </div>
-            </div>
-        </div>
 
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="valor">Valor (R$)</label>
+                        <input type="number" step="0.01" id="valor" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="condicao">Condição de Pagamento</label>
+                        <!-- Esse select será preenchido automaticamente pelo JavaScript -->
+                        <select id="condicao" required>
+                            <option value="">Carregando opções...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="btn-submit">Salvar Registro no Banco de Dados</button>
+                <div id="mensagem" class="alert"></div>
+            </form>
+        </div>
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4YPjf5FcT41x3hQnJQVvitLnuqi16S5NtcMYt0KWsS_Mtzi9ZANkeg3j6-asIhm8/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwG-wCzE6ZOg4DUCEeWDAWNkyq4h17BTFux8WYgPISyNqlbRaP6zoLc11YeSMmSO5zQ/exec'; 
 
-        // Função para alternar entre as abas
-        function abrirAba(idAba, elementoBotao) {
-            document.querySelectorAll('.tab-content').forEach(aba => aba.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(idAba).classList.add('active');
-            elementoBotao.classList.add('active');
-        }
+        // Função que roda assim que o site abre para buscar as abas de configuração
+        window.onload = async function() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const configuracoes = await response.json();
 
-        // Função para mostrar o nome do arquivo anexado
-        function atualizarNomeArquivo() {
-            const input = document.getElementById('foto');
-            const label = document.getElementById('nome-arquivo');
-            if(input.files.length > 0) {
-                label.textContent = "Anexado: " + input.files[0].name;
-                label.style.color = "#2E7D32";
-                label.style.fontWeight = "bold";
+                // Preenche os serviços puxados da aba 'config_servicos'
+                const dataListServicos = document.getElementById('lista-servicos');
+                configuracoes.servicos.forEach(servico => {
+                    let option = document.createElement('option');
+                    option.value = servico;
+                    dataListServicos.appendChild(option);
+                });
+
+                // Preenche as condições puxadas da aba 'config_condicoes'
+                const selectCondicao = document.getElementById('condicao');
+                selectCondicao.innerHTML = '<option value="">Selecione...</option>'; // Limpa o "Carregando"
+                configuracoes.condicoes.forEach(condicao => {
+                    let option = document.createElement('option');
+                    option.value = condicao;
+                    option.textContent = condicao;
+                    selectCondicao.appendChild(option);
+                });
+
+                // Some com a tela de carregamento
+                document.getElementById('loading-overlay').style.display = 'none';
+
+            } catch (error) {
+                document.getElementById('loading-overlay').innerHTML = '<p style="color:red; font-weight:bold;">Erro ao conectar com a Planilha. Recarregue a página.</p>';
             }
-        }
+        };
 
-        // Envio do formulário
+        // Função que salva os dados
         document.getElementById('form-servico').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
             const mensagem = document.getElementById('mensagem');
 
             btn.disabled = true;
-            btn.textContent = 'Enviando dados...';
+            btn.textContent = 'Processando...';
             
             const formData = new FormData();
             formData.append('numero', document.getElementById('numero').value);
@@ -201,21 +155,20 @@
             formData.append('valor', document.getElementById('valor').value);
             formData.append('condicao', document.getElementById('condicao').value);
 
-            // TODO Futuro: Lógica para enviar a FOTO em Base64 para o Apps Script
-
             try {
                 const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const result = await response.json();
 
                 if(result.status === 'sucesso') {
-                    mensagem.textContent = 'Serviço e detalhes registrados com sucesso!';
+                    mensagem.textContent = 'Salvo com sucesso!';
                     mensagem.className = 'alert success';
                     document.getElementById('form-servico').reset();
-                    document.getElementById('nome-arquivo').textContent = 'Clique para anexar foto do serviço ou prancheta';
-                    document.getElementById('nome-arquivo').style.color = "inherit";
+                } else {
+                    throw new Error(result.mensagem);
                 }
             } catch (error) {
-                alert('Erro ao conectar com o banco de dados. Verifique sua conexão.');
+                mensagem.textContent = 'Erro ao salvar. Tente novamente.';
+                mensagem.className = 'alert error';
             } finally {
                 btn.disabled = false;
                 btn.textContent = 'Salvar Registro no Banco de Dados';
