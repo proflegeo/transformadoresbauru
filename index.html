@@ -290,49 +290,86 @@
             }
         });
 
-        async function buscarGarantia() {
+       async function buscarGarantia() {
             const termo = document.getElementById('termo-busca').value;
             const container = document.getElementById('resultados-busca');
             if(!termo) return;
 
-            container.innerHTML = '<p>Buscando...</p>';
+            container.innerHTML = '<p>Buscando no banco de dados...</p>';
 
             try {
                 const res = await fetch(SCRIPT_URL + '?acao=buscar&termo=' + encodeURIComponent(termo));
                 const dados = await res.json();
 
                 if(dados.length === 0) {
-                    container.innerHTML = '<p style="color:red;">Nenhum registro encontrado.</p>';
+                    container.innerHTML = '<p style="color:red; font-weight:bold;">Nenhum registro encontrado para esta busca.</p>';
                     return;
                 }
 
                 container.innerHTML = '';
                 dados.forEach(item => {
-                    const dataParts = item.data.split(' ')[0].split('/');
-                    const dataServico = new Date(`${dataParts[2]}-${dataParts[1]}-${dataParts[0]}T00:00:00`); 
+                    // 1. CORREÇÃO DO BUG DA DATA (Lida com o formato maluco do Google Sheets)
+                    let dataServico;
+                    if (item.data.includes('T')) {
+                        dataServico = new Date(item.data); // Lê o formato ISO
+                    } else {
+                        const partes = item.data.split(' ')[0].split('/');
+                        dataServico = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T12:00:00`);
+                    }
+
+                    const dataFormatada = dataServico.toLocaleDateString('pt-BR');
+
+                    // 2. CÁLCULO DE TEMPO E GARANTIA
                     const hoje = new Date();
-                    const dias = Math.floor((hoje - dataServico) / (1000 * 60 * 60 * 24));
-                    let tempoStr = dias + " dias atrás";
+                    const diffTime = Math.abs(hoje - dataServico);
+                    const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1; // -1 para ajustar o fuso
+                    
+                    let tempoStr = dias <= 0 ? "Hoje" : (dias + " dias atrás");
                     if(dias > 30) tempoStr = Math.floor(dias/30) + " meses atrás";
 
-                    let btnFotoHTML = item.foto ? `<a href="${item.foto}" target="_blank" class="btn-foto">Ver Foto da OS</a>` : `<span style="font-size:0.8rem;color:#999;">Sem foto</span>`;
+                    // Regra de negócio: Vamos assumir 90 dias de garantia por padrão (Você pode mudar depois)
+                    let badgeGarantia = dias <= 90 
+                        ? '<span style="background: #E8F5E9; color: #2E7D32; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;">✅ Na Garantia</span>' 
+                        : '<span style="background: #FFEBEE; color: #C62828; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;">⚠️ Fora de Garantia</span>';
 
+                    // 3. BOTÕES E LINKS (WhatsApp dinâmico)
+                    let zapLink = item.telefone ? `https://wa.me/55${item.telefone.replace(/\D/g, '')}` : '#';
+                    let btnFotoHTML = item.foto ? `<a href="${item.foto}" target="_blank" class="btn-foto">Ver OS Original</a>` : `<span style="font-size:0.8rem;color:#999;font-style:italic;">Sem foto anexada</span>`;
+
+                    // 4. DESENHA O NOVO CARD PROFISSIONAL
                     container.innerHTML += `
-                        <div class="history-card">
-                            <div class="history-info">
-                                <strong>OS: ${item.numero} | Cliente: ${item.cliente}</strong>
-                                <p><strong>Serviço:</strong> ${item.servico}</p>
-                                <p><strong>Data:</strong> ${item.data.split(' ')[0]} <span class="badge-tempo">${tempoStr}</span></p>
-                                <p><strong>Tel:</strong> ${item.telefone} | <strong>Doc:</strong> ${item.cpf_cnpj}</p>
+                        <div class="history-card" style="display: flex; flex-direction: column; gap: 15px; background: #fff; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+                            
+                            <!-- Cabeçalho do Card -->
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                                <div>
+                                    <h3 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1.2rem;">OS: ${item.numero} | ${item.cliente}</h3>
+                                    <span style="font-size: 0.95rem; color: #555;">Realizado em: <strong>${dataFormatada}</strong> (${tempoStr})</span>
+                                    ${badgeGarantia}
+                                </div>
+                                <div>
+                                    ${btnFotoHTML}
+                                </div>
                             </div>
-                            <div>
-                                ${btnFotoHTML}
+
+                            <!-- Corpo do Card -->
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.95rem; color: #333;">
+                                <div>
+                                    <p style="margin-bottom: 5px;"><span style="color:#666;">Serviço:</span> <strong>${item.servico}</strong></p>
+                                    <p style="margin-bottom: 5px;"><span style="color:#666;">Valor Pago:</span> <strong>R$ ${parseFloat(item.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></p>
+                                    <p style="margin-bottom: 5px;"><span style="color:#666;">Condição:</span> ${item.condicao}</p>
+                                </div>
+                                <div>
+                                    <p style="margin-bottom: 5px;"><span style="color:#666;">Contato:</span> <a href="${zapLink}" target="_blank" style="color: #25D366; text-decoration: none; font-weight: bold;">💬 ${item.telefone}</a></p>
+                                    <p style="margin-bottom: 5px;"><span style="color:#666;">Documento:</span> ${item.cpf_cnpj || 'Não informado'}</p>
+                                </div>
                             </div>
+
                         </div>
                     `;
                 });
             } catch(e) {
-                container.innerHTML = '<p style="color:red;">Erro ao buscar dados.</p>';
+                container.innerHTML = '<p style="color:red; font-weight:bold;">Erro ao buscar dados. Tente novamente.</p>';
             }
         }
     </script>
