@@ -3,135 +3,197 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Gestão de Serviços | Transformadores Bauru</title>
+    <title>Gestão 2.0 | Transformadores Bauru</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #0F4C81; /* Azul Industrial */
-            --secondary-color: #F2A900; /* Amarelo Energia */
+            --primary-color: #0F4C81; 
+            --secondary-color: #F2A900; 
             --bg-color: #F4F7F6;
             --surface-color: #FFFFFF;
             --text-main: #333333;
-            --text-light: #666666;
             --border-color: #E0E0E0;
-            --success-color: #2E7D32;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
 
-        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        
-        header h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; }
+        /* Header e Menu de Abas */
+        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+        header h1 { font-size: 1.5rem; font-weight: 600; }
         header span { color: var(--secondary-color); font-weight: 700; }
 
-        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; }
+        .tabs { display: flex; gap: 1rem; margin-top: 1rem; max-width: 1200px; margin: 1rem auto 0; padding: 0 2rem; }
+        .tab-btn { background: transparent; color: rgba(255,255,255,0.7); border: none; padding: 0.5rem 1rem; font-size: 1rem; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.3s; }
+        .tab-btn:hover { color: white; }
+        .tab-btn.active { color: white; border-bottom: 3px solid var(--secondary-color); }
 
-        .card { background: var(--surface-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--secondary-color); }
+        /* Container Principal */
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; width: 100%; }
+        .tab-content { display: none; animation: fadeIn 0.3s ease-in; }
+        .tab-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--primary-color); }
+        .card { background: var(--surface-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--primary-color); border-bottom: 2px solid var(--bg-color); padding-bottom: 0.5rem; }
 
+        /* Formulário */
         .form-group { margin-bottom: 1.25rem; }
-        
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
-        
-        input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.3s; background-color: #FAFAFA; }
-        
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
-
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        button { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.3s; margin-top: 1rem; }
-        
-        button:hover { background-color: #0c3e69; }
-        button:disabled { background-color: #9fb3c4; cursor: not-allowed; }
+        /* Upload de Arquivo */
+        .file-upload-wrapper { border: 2px dashed var(--border-color); padding: 1.5rem; text-align: center; border-radius: 6px; background-color: #FAFAFA; cursor: pointer; transition: border 0.3s; }
+        .file-upload-wrapper:hover { border-color: var(--primary-color); }
+        .file-upload-wrapper input[type="file"] { display: none; }
+        .file-upload-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
 
-        .alert { display: none; padding: 1rem; border-radius: 6px; margin-top: 1rem; font-weight: 500; text-align: center; }
-        .alert.success { display: block; background-color: #E8F5E9; color: var(--success-color); border: 1px solid #C8E6C9; }
-        .alert.error { display: block; background-color: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+        button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem; transition: background 0.3s; }
+        button.btn-primary:hover { background-color: #0c3e69; }
 
-        /* Loader */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--secondary-color); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .alert { display: none; padding: 1rem; border-radius: 6px; margin-top: 1rem; text-align: center; font-weight: 500; }
+        .alert.success { display: block; background-color: #E8F5E9; color: #2E7D32; }
 
+        /* Placeholder para telas em construção */
+        .em-construcao { text-align: center; padding: 3rem; color: #666; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Transformadores<span>Bauru</span></h1>
-        <p>Painel Administrativo</p>
+        <div class="header-content">
+            <h1>Transformadores<span>Bauru</span></h1>
+            <p style="font-size: 0.9rem; opacity: 0.8;">Sistema de Gestão Interna</p>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" onclick="abrirAba('aba-registro', this)">Novo Registro</button>
+            <button class="tab-btn" onclick="abrirAba('aba-retorno', this)">Retornos Pendentes</button>
+            <button class="tab-btn" onclick="abrirAba('aba-relatorios', this)">Relatórios</button>
+        </div>
     </header>
 
     <div class="container">
-        <div class="card">
-            <h2>Novo Orçamento / Serviço</h2>
-            <form id="form-servico">
-                
-                <div class="grid-2">
-                    <div class="form-group">
-                        <label for="numero">Número do Pedido</label>
-                        <input type="text" id="numero" name="numero" placeholder="Ex: ORC-1001" required>
+        
+        <!-- ABA 1: NOVO REGISTRO -->
+        <div id="aba-registro" class="tab-content active">
+            <div class="card">
+                <h2>Registrar Orçamento ou Serviço</h2>
+                <form id="form-servico">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="numero">Número do Pedido (OS)</label>
+                            <input type="text" id="numero" required placeholder="Ex: OS-2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="cliente">Cliente / Empresa</label>
+                            <input type="text" id="cliente" required placeholder="Ex: Indústria XYZ">
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="cliente">Nome do Cliente / Empresa</label>
-                        <input type="text" id="cliente" name="cliente" placeholder="Ex: Indústria XYZ" required>
+                        <label for="servico">Descrição do Serviço (Selecione ou digite)</label>
+                        <!-- DATALIST: Sugere serviços padrão, mas permite digitar novos -->
+                        <input list="lista-servicos" id="servico" required placeholder="Ex: Manutenção Preventiva...">
+                        <datalist id="lista-servicos">
+                            <option value="Manutenção Preventiva - Trafo">
+                            <option value="Manutenção Corretiva - Trafo">
+                            <option value="Troca de Óleo Isolante">
+                            <option value="Ensaio de Tensão Aplicada">
+                            <option value="Rebobinamento">
+                        </datalist>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="servico">Descrição do Serviço</label>
-                    <textarea id="servico" name="servico" rows="3" placeholder="Ex: Manutenção preventiva de transformador 500kVA..." required></textarea>
-                </div>
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label for="valor">Valor Total (R$)</label>
+                            <input type="number" step="0.01" id="valor" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="condicao">Condição de Pagamento</label>
+                            <select id="condicao" required>
+                                <option value="">Selecione...</option>
+                                <option value="À Vista">À Vista (Pix/Transferência)</option>
+                                <option value="Boleto 30 Dias">Boleto 30 Dias</option>
+                                <option value="Boleto 30/60/90 Dias">Boleto 30/60/90 Dias</option>
+                                <option value="Faturamento">Faturamento Mensal</option>
+                            </select>
+                        </div>
+                    </div>
 
-                <div class="grid-2">
+                    <!-- PREPARO PARA O UPLOAD DE FOTO -->
                     <div class="form-group">
-                        <label for="valor">Valor (R$)</label>
-                        <input type="number" step="0.01" id="valor" name="valor" placeholder="0.00" required>
+                        <label>Registro Fotográfico (Opcional)</label>
+                        <label class="file-upload-wrapper" for="foto">
+                            <span class="file-upload-icon">📷</span>
+                            <span id="nome-arquivo">Clique para anexar foto do serviço ou prancheta</span>
+                            <input type="file" id="foto" accept="image/*" onchange="atualizarNomeArquivo()">
+                        </label>
                     </div>
-                    <div class="form-group">
-                        <label for="condicao">Condição de Pagamento</label>
-                        <select id="condicao" name="condicao" required>
-                            <option value="">Selecione...</option>
-                            <option value="À Vista">À Vista (Pix/Dinheiro)</option>
-                            <option value="Boleto 30/60 dias">Boleto 30/60 dias</option>
-                            <option value="Cartão de Crédito">Cartão de Crédito</option>
-                            <option value="Permuta/Outros">Permuta / Outros</option>
-                        </select>
-                    </div>
-                </div>
 
-                <button type="submit" id="btn-submit">
-                    <span class="loader" id="loader"></span>
-                    <span id="btn-text">Registrar no Sistema</span>
-                </button>
-
-                <div id="mensagem" class="alert"></div>
-            </form>
+                    <button type="submit" class="btn-primary" id="btn-submit">Salvar Registro no Banco de Dados</button>
+                    <div id="mensagem" class="alert"></div>
+                </form>
+            </div>
         </div>
+
+        <!-- ABA 2: RETORNOS PENDENTES -->
+        <div id="aba-retorno" class="tab-content">
+            <div class="card">
+                <h2>Clientes para Contato (Pós-Venda)</h2>
+                <div class="em-construcao">
+                    <h3>🚧 Módulo em Desenvolvimento</h3>
+                    <p>Aqui o sistema listará automaticamente os clientes que fizeram serviço há mais de 11 meses, alertando a equipe para oferecer revisões e manutenções preventivas.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABA 3: RELATÓRIOS -->
+        <div id="aba-relatorios" class="tab-content">
+            <div class="card">
+                <h2>Dashboards e Relatórios</h2>
+                <div class="em-construcao">
+                    <h3>🚧 Integração com Data Studio</h3>
+                    <p>Aqui incorporaremos gráficos dinâmicos mostrando Faturamento Mensal, Serviços mais Realizados e Clientes Ativos.</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        // URL do Google Apps Script inserida aqui
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4YPjf5FcT41x3hQnJQVvitLnuqi16S5NtcMYt0KWsS_Mtzi9ZANkeg3j6-asIhm8/exec'; 
 
+        // Função para alternar entre as abas
+        function abrirAba(idAba, elementoBotao) {
+            document.querySelectorAll('.tab-content').forEach(aba => aba.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(idAba).classList.add('active');
+            elementoBotao.classList.add('active');
+        }
+
+        // Função para mostrar o nome do arquivo anexado
+        function atualizarNomeArquivo() {
+            const input = document.getElementById('foto');
+            const label = document.getElementById('nome-arquivo');
+            if(input.files.length > 0) {
+                label.textContent = "Anexado: " + input.files[0].name;
+                label.style.color = "#2E7D32";
+                label.style.fontWeight = "bold";
+            }
+        }
+
+        // Envio do formulário
         document.getElementById('form-servico').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const btn = document.getElementById('btn-submit');
-            const loader = document.getElementById('loader');
-            const btnText = document.getElementById('btn-text');
             const mensagem = document.getElementById('mensagem');
 
-            // Feedback visual de carregamento
             btn.disabled = true;
-            loader.style.display = 'inline-block';
-            btnText.textContent = 'Processando...';
-            mensagem.className = 'alert';
-            mensagem.textContent = '';
-
-            // Coleta dos dados
+            btn.textContent = 'Enviando dados...';
+            
             const formData = new FormData();
             formData.append('numero', document.getElementById('numero').value);
             formData.append('cliente', document.getElementById('cliente').value);
@@ -139,36 +201,25 @@
             formData.append('valor', document.getElementById('valor').value);
             formData.append('condicao', document.getElementById('condicao').value);
 
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
+            // TODO Futuro: Lógica para enviar a FOTO em Base64 para o Apps Script
 
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const result = await response.json();
 
                 if(result.status === 'sucesso') {
-                    mensagem.textContent = 'Serviço registrado com sucesso!';
+                    mensagem.textContent = 'Serviço e detalhes registrados com sucesso!';
                     mensagem.className = 'alert success';
                     document.getElementById('form-servico').reset();
-                } else {
-                    throw new Error('Erro ao salvar.');
+                    document.getElementById('nome-arquivo').textContent = 'Clique para anexar foto do serviço ou prancheta';
+                    document.getElementById('nome-arquivo').style.color = "inherit";
                 }
             } catch (error) {
-                mensagem.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
-                mensagem.className = 'alert error';
+                alert('Erro ao conectar com o banco de dados. Verifique sua conexão.');
             } finally {
-                // Restaura o botão
                 btn.disabled = false;
-                loader.style.display = 'none';
-                btnText.textContent = 'Registrar no Sistema';
-                
-                // Oculta a mensagem de sucesso após 5 segundos
-                setTimeout(() => {
-                    if(mensagem.classList.contains('success')) {
-                        mensagem.className = 'alert';
-                    }
-                }, 5000);
+                btn.textContent = 'Salvar Registro no Banco de Dados';
+                setTimeout(() => { mensagem.style.display = 'none'; }, 4000);
             }
         });
     </script>
