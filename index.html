@@ -126,55 +126,37 @@
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby2Kbab84cj0KQzc0m6DoU7E8-m3c33b6axzwosF44OL_g9jUpbm6roq6djAvFzQZRx/exec'; 
+        // COLOQUE SUA URL AQUI
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxyeP8lJB6JbPTA-LVBVJ8CtqH3mq6OUrq1WRkZeM2SkQn5fS3jSGR7okSyyHVPRo6D/exec'; 
 
         let fotoBase64 = null;
         let fotoMime = null;
 
-        // --- INÍCIO DAS MÁSCARAS DE VALIDAÇÃO ---
-
-        document.getElementById('numero').addEventListener('input', function(e) {
-            this.value = this.value.replace(/\D/g, '').substring(0, 4);
-        });
-
+        // --- MÁSCARAS ---
+        document.getElementById('numero').addEventListener('input', function(e) { this.value = this.value.replace(/\D/g, '').substring(0, 4); });
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
             value = value.replace(/(\d)(\d{4})$/, '$1-$2');
             e.target.value = value;
         });
-
         document.getElementById('cpf_cnpj').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, ''); 
             if (value.length <= 11) {
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d)/, '$1.$2');
-                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2'); value = value.replace(/(\d{3})(\d)/, '$1.$2'); value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
             } else {
-                value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-                value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-                value = value.replace(/(\d{4})(\d)/, '$1-$2');
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2'); value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); value = value.replace(/\.(\d{3})(\d)/, '.$1/$2'); value = value.replace(/(\d{4})(\d)/, '$1-$2');
             }
             e.target.value = value.substring(0, 18);
         });
-
-        // NOVO: Máscara Financeira (Valor)
         document.getElementById('valor').addEventListener('input', function(e) {
-            let value = e.target.value.replace(/\D/g, ''); // Permite só números
+            let value = e.target.value.replace(/\D/g, ''); 
             if (value === '') { e.target.value = ''; return; }
-            
-            // Divide por 100 para criar os centavos (Ex: "5600" -> 56.00)
             value = (parseInt(value, 10) / 100).toFixed(2);
-            
-            // Formata para o padrão Brasileiro: "1.500,00"
             value = value.replace('.', ',');
             value = value.replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
-            
             e.target.value = value;
         });
-
-        // --- FIM DAS MÁSCARAS ---
 
         function abrirAba(id, btn) {
             document.querySelectorAll('.tab-content').forEach(aba => aba.classList.remove('active'));
@@ -187,10 +169,8 @@
             try {
                 const res = await fetch(SCRIPT_URL);
                 const config = await res.json();
-                
                 const dls = document.getElementById('lista-servicos');
                 config.servicos.forEach(s => { let opt = document.createElement('option'); opt.value = s; dls.appendChild(opt); });
-                
                 const cond = document.getElementById('condicao');
                 cond.innerHTML = '<option value="">Selecione...</option>';
                 config.condicoes.forEach(c => { let opt = document.createElement('option'); opt.value = c; opt.textContent = c; cond.appendChild(opt); });
@@ -226,14 +206,11 @@
                         if(json.dados.telefone) { document.getElementById('telefone').value = json.dados.telefone; document.getElementById('telefone').dispatchEvent(new Event('input')); }
                         if(json.dados.cpf_cnpj) { document.getElementById('cpf_cnpj').value = json.dados.cpf_cnpj; document.getElementById('cpf_cnpj').dispatchEvent(new Event('input')); }
                         if(json.dados.servico) { document.getElementById('servico').value = json.dados.servico; }
-                        
-                        // Adaptação para a Inteligência Artificial preencher o Valor com máscara
                         if(json.dados.valor) { 
-                            let valStr = parseFloat(json.dados.valor).toFixed(2).replace('.', ''); // Transforma 56 em "5600"
+                            let valStr = parseFloat(json.dados.valor).toFixed(2).replace('.', ''); 
                             document.getElementById('valor').value = valStr; 
                             document.getElementById('valor').dispatchEvent(new Event('input')); 
                         }
-                        
                         status.textContent = '✅ Dados extraídos! Confira abaixo.';
                         status.style.color = '#2E7D32';
                     }
@@ -251,7 +228,6 @@
             
             btn.disabled = true; btn.textContent = '⏳ Salvando...';
 
-            // NOVO: Desformata o valor (de 1.500,00 para 1500.00) antes de mandar pro Apps Script
             let valorFormatado = document.getElementById('valor').value;
             let valorParaBanco = valorFormatado.replace(/\./g, '').replace(',', '.');
 
@@ -262,7 +238,7 @@
             formData.append('telefone', document.getElementById('telefone').value);
             formData.append('cpf_cnpj', document.getElementById('cpf_cnpj').value);
             formData.append('servico', document.getElementById('servico').value);
-            formData.append('valor', valorParaBanco); // Envia no formato limpo de cálculo
+            formData.append('valor', valorParaBanco); 
             formData.append('condicao', document.getElementById('condicao').value);
             
             if(fotoBase64) {
@@ -273,24 +249,30 @@
             try {
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const json = await res.json();
+                
+                // Trata o erro de OS duplicada vindo do Servidor
                 if(json.status === 'sucesso') {
-                    msg.textContent = '✅ Salvo com sucesso!';
+                    msg.textContent = json.mensagem;
                     msg.style.color = '#2E7D32';
                     document.getElementById('form-servico').reset();
                     fotoBase64 = null; fotoMime = null;
                     document.getElementById('upload-status').textContent = 'Clique para selecionar e preencher com IA';
                     document.getElementById('upload-status').style.color = '#666';
+                } else {
+                    msg.textContent = json.mensagem; // Exibe: "⚠️ Esta OS já está cadastrada!"
+                    msg.style.color = '#C62828';
                 }
             } catch(err) {
-                msg.textContent = '❌ Erro ao salvar.';
+                msg.textContent = '❌ Erro ao conectar com o banco de dados.';
                 msg.style.color = '#C62828';
             } finally {
                 btn.disabled = false; btn.textContent = '💾 2. Salvar no Banco e no Drive';
-                setTimeout(()=> msg.textContent='', 4000);
+                // Aumentei o tempo da mensagem para 6 segundos para dar tempo de ler o erro
+                setTimeout(()=> msg.textContent='', 6000); 
             }
         });
 
-       async function buscarGarantia() {
+        async function buscarGarantia() {
             const termo = document.getElementById('termo-busca').value;
             const container = document.getElementById('resultados-busca');
             if(!termo) return;
@@ -306,53 +288,43 @@
                     return;
                 }
 
-                container.innerHTML = '';
-                dados.forEach(item => {
-                    // 1. CORREÇÃO DO BUG DA DATA (Lida com o formato maluco do Google Sheets)
+                container.innerHTML = `<p style="margin-bottom: 1rem; color: #666;">Encontrados <strong>${dados.length}</strong> resultados:</p>`;
+                
+                // Inverte a ordem para mostrar os mais recentes primeiro
+                dados.reverse().forEach(item => {
                     let dataServico;
                     if (item.data.includes('T')) {
-                        dataServico = new Date(item.data); // Lê o formato ISO
+                        dataServico = new Date(item.data); 
                     } else {
                         const partes = item.data.split(' ')[0].split('/');
                         dataServico = new Date(`${partes[2]}-${partes[1]}-${partes[0]}T12:00:00`);
                     }
 
                     const dataFormatada = dataServico.toLocaleDateString('pt-BR');
-
-                    // 2. CÁLCULO DE TEMPO E GARANTIA
                     const hoje = new Date();
                     const diffTime = Math.abs(hoje - dataServico);
-                    const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1; // -1 para ajustar o fuso
+                    const dias = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) - 1; 
                     
                     let tempoStr = dias <= 0 ? "Hoje" : (dias + " dias atrás");
                     if(dias > 30) tempoStr = Math.floor(dias/30) + " meses atrás";
 
-                    // Regra de negócio: Vamos assumir 90 dias de garantia por padrão (Você pode mudar depois)
                     let badgeGarantia = dias <= 90 
                         ? '<span style="background: #E8F5E9; color: #2E7D32; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;">✅ Na Garantia</span>' 
                         : '<span style="background: #FFEBEE; color: #C62828; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; font-weight: bold; margin-left: 10px;">⚠️ Fora de Garantia</span>';
 
-                    // 3. BOTÕES E LINKS (WhatsApp dinâmico)
                     let zapLink = item.telefone ? `https://wa.me/55${item.telefone.replace(/\D/g, '')}` : '#';
                     let btnFotoHTML = item.foto ? `<a href="${item.foto}" target="_blank" class="btn-foto">Ver OS Original</a>` : `<span style="font-size:0.8rem;color:#999;font-style:italic;">Sem foto anexada</span>`;
 
-                    // 4. DESENHA O NOVO CARD PROFISSIONAL
                     container.innerHTML += `
                         <div class="history-card" style="display: flex; flex-direction: column; gap: 15px; background: #fff; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                            
-                            <!-- Cabeçalho do Card -->
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
                                 <div>
                                     <h3 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1.2rem;">OS: ${item.numero} | ${item.cliente}</h3>
                                     <span style="font-size: 0.95rem; color: #555;">Realizado em: <strong>${dataFormatada}</strong> (${tempoStr})</span>
                                     ${badgeGarantia}
                                 </div>
-                                <div>
-                                    ${btnFotoHTML}
-                                </div>
+                                <div>${btnFotoHTML}</div>
                             </div>
-
-                            <!-- Corpo do Card -->
                             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.95rem; color: #333;">
                                 <div>
                                     <p style="margin-bottom: 5px;"><span style="color:#666;">Serviço:</span> <strong>${item.servico}</strong></p>
@@ -364,7 +336,6 @@
                                     <p style="margin-bottom: 5px;"><span style="color:#666;">Documento:</span> ${item.cpf_cnpj || 'Não informado'}</p>
                                 </div>
                             </div>
-
                         </div>
                     `;
                 });
