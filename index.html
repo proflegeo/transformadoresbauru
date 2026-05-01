@@ -3,178 +3,282 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Gestão Integrada | Transformadores Bauru</title>
+    <title>Sistema de Gestão | Transformadores Bauru</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-color: #0F4C81; 
-            --secondary-color: #F2A900; 
-            --bg-color: #F4F7F6;
-            --surface-color: #FFFFFF;
-            --text-main: #333333;
-            --border-color: #E0E0E0;
-        }
-
+        :root { --primary-color: #0F4C81; --secondary-color: #F2A900; --bg-color: #F4F7F6; --surface-color: #FFFFFF; --text-main: #333333; --border-color: #E0E0E0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
-
-        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; width: 100%; }
+        
+        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; }
+        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; width: 100%; }
         header h1 { font-size: 1.5rem; font-weight: 600; }
         header span { color: var(--secondary-color); font-weight: 700; }
 
-        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; width: 100%; }
-        .card { background: var(--surface-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--primary-color); border-bottom: 2px solid var(--bg-color); padding-bottom: 0.5rem; }
+        .tabs { display: flex; gap: 1rem; max-width: 1000px; margin: 0 auto; width: 100%; padding: 1rem 1rem 0; }
+        .tab-btn { background: #e0e7ec; color: var(--primary-color); border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px 8px 0 0; }
+        .tab-btn.active { background: var(--surface-color); color: var(--primary-color); border-top: 3px solid var(--secondary-color); }
 
+        .container { max-width: 1000px; margin: 0 auto 2rem; padding: 0 1rem; width: 100%; }
+        .tab-content { display: none; background: var(--surface-color); padding: 2rem; border-radius: 0 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .tab-content.active { display: block; }
+        
         .form-group { margin-bottom: 1.25rem; }
         label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
-        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; transition: 0.3s; }
+        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; }
         input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
-        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; margin-top: 1rem; transition: background 0.3s; }
+        .upload-area { border: 2px dashed var(--primary-color); padding: 2rem; text-align: center; border-radius: 8px; cursor: pointer; background: #f8fbff; margin-bottom: 1.5rem; }
+        .upload-area input { display: none; }
+        .upload-area:hover { background: #eef5ff; }
+
+        button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.3s; }
         button.btn-primary:hover { background-color: #0c3e69; }
         button:disabled { background-color: #9fb3c4; cursor: not-allowed; }
 
-        .alert { display: none; padding: 1rem; border-radius: 6px; margin-top: 1rem; text-align: center; font-weight: 500; }
-        .alert.success { display: block; background-color: #E8F5E9; color: #2E7D32; }
-        .alert.error { display: block; background-color: #FFEBEE; color: #C62828; }
-
-        #loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .search-bar { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .history-card { border: 1px solid var(--border-color); border-left: 4px solid var(--secondary-color); padding: 1rem; border-radius: 6px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
+        .history-info p { margin-bottom: 0.3rem; font-size: 0.9rem; }
+        .badge-tempo { background: #E8F5E9; color: #2E7D32; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
+        .btn-foto { background: var(--secondary-color); color: #000; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; }
     </style>
 </head>
 <body>
 
-    <!-- Tela de carregamento enquanto busca os dados da planilha -->
-    <div id="loading-overlay">
-        <div class="spinner"></div>
-        <p>Sincronizando com o Banco de Dados...</p>
-    </div>
-
     <header>
         <div class="header-content">
             <h1>Transformadores<span>Bauru</span></h1>
-            <p style="font-size: 0.9rem; opacity: 0.8;">Sistema de Gestão Interna</p>
         </div>
     </header>
 
+    <div class="tabs">
+        <button class="tab-btn active" onclick="abrirAba('aba-registro', this)">Nova OS (com IA)</button>
+        <button class="tab-btn" onclick="abrirAba('aba-consulta', this)">Consulta & Garantia</button>
+    </div>
+
     <div class="container">
-        <div class="card">
-            <h2>Novo Registro</h2>
+        
+        <div id="aba-registro" class="tab-content active">
+            <label class="upload-area" id="upload-label">
+                <h3 style="color: var(--primary-color);">📸 1. Anexar Foto da OS</h3>
+                <p id="upload-status" style="margin-top: 0.5rem; color: #666;">Clique para selecionar e preencher com IA</p>
+                <input type="file" id="foto-os" accept="image/*">
+            </label>
+
             <form id="form-servico">
                 <div class="grid-2">
                     <div class="form-group">
-                        <label for="numero">Número do Pedido (OS/Orçamento)</label>
+                        <label>Número do Pedido (OS)</label>
                         <input type="text" id="numero" required placeholder="Ex: OS-1005">
                     </div>
                     <div class="form-group">
-                        <label for="cliente">Nome do Cliente / Empresa</label>
+                        <label>Cliente / Empresa</label>
                         <input type="text" id="cliente" required placeholder="Ex: Indústria XYZ">
                     </div>
                 </div>
 
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Telefone / WhatsApp</label>
+                        <input type="text" id="telefone" required placeholder="(14) 99999-9999">
+                    </div>
+                    <div class="form-group">
+                        <label>CPF / CNPJ</label>
+                        <input type="text" id="cpf_cnpj" placeholder="Opcional">
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="servico">Serviço (Selecione ou digite um novo)</label>
-                    <input list="lista-servicos" id="servico" required placeholder="Selecione ou digite o serviço...">
-                    <!-- Essa lista será preenchida automaticamente pelo JavaScript -->
+                    <label>Serviço</label>
+                    <input list="lista-servicos" id="servico" required placeholder="Selecione ou digite...">
                     <datalist id="lista-servicos"></datalist>
                 </div>
 
                 <div class="grid-2">
                     <div class="form-group">
-                        <label for="valor">Valor (R$)</label>
+                        <label>Valor (R$)</label>
                         <input type="number" step="0.01" id="valor" required placeholder="0.00">
                     </div>
                     <div class="form-group">
-                        <label for="condicao">Condição de Pagamento</label>
-                        <!-- Esse select será preenchido automaticamente pelo JavaScript -->
-                        <select id="condicao" required>
-                            <option value="">Carregando opções...</option>
-                        </select>
+                        <label>Condição de Pagamento</label>
+                        <select id="condicao" required></select>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-primary" id="btn-submit">Salvar Registro no Banco de Dados</button>
-                <div id="mensagem" class="alert"></div>
+                <button type="submit" class="btn-primary" id="btn-submit">💾 2. Salvar no Banco e no Drive</button>
+                <p id="mensagem" style="text-align: center; margin-top: 1rem; font-weight: bold;"></p>
             </form>
         </div>
+
+        <div id="aba-consulta" class="tab-content">
+            <h2 style="margin-bottom: 1rem; color: var(--primary-color);">Histórico de Serviços</h2>
+            <div class="search-bar">
+                <input type="text" id="termo-busca" placeholder="Digite nome, número, telefone, CPF..." style="flex: 1;">
+                <button onclick="buscarGarantia()" class="btn-primary" style="width: auto;">Pesquisar</button>
+            </div>
+            <div id="resultados-busca">
+                <p style="text-align: center; color: #666;">Busque um cliente para ver a garantia e a foto da OS original.</p>
+            </div>
+        </div>
+
     </div>
 
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwG-wCzE6ZOg4DUCEeWDAWNkyq4h17BTFux8WYgPISyNqlbRaP6zoLc11YeSMmSO5zQ/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyXdBkPA_I2KSCE3g6whvWi0Ys9kIe3mRtvydE7lhG0b6i8FTA8rsWgj1JqvvQN1nhe/exec'; 
 
-        // Função que roda assim que o site abre para buscar as abas de configuração
+        let fotoBase64 = null;
+        let fotoMime = null;
+
+        function abrirAba(id, btn) {
+            document.querySelectorAll('.tab-content').forEach(aba => aba.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+
         window.onload = async function() {
             try {
-                const response = await fetch(SCRIPT_URL);
-                const configuracoes = await response.json();
+                const res = await fetch(SCRIPT_URL);
+                const config = await res.json();
+                
+                const dls = document.getElementById('lista-servicos');
+                config.servicos.forEach(s => { let opt = document.createElement('option'); opt.value = s; dls.appendChild(opt); });
+                
+                const cond = document.getElementById('condicao');
+                cond.innerHTML = '<option value="">Selecione...</option>';
+                config.condicoes.forEach(c => { let opt = document.createElement('option'); opt.value = c; opt.textContent = c; cond.appendChild(opt); });
+            } catch(e) {}
+        }
 
-                // Preenche os serviços puxados da aba 'config_servicos'
-                const dataListServicos = document.getElementById('lista-servicos');
-                configuracoes.servicos.forEach(servico => {
-                    let option = document.createElement('option');
-                    option.value = servico;
-                    dataListServicos.appendChild(option);
-                });
+        document.getElementById('foto-os').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
 
-                // Preenche as condições puxadas da aba 'config_condicoes'
-                const selectCondicao = document.getElementById('condicao');
-                selectCondicao.innerHTML = '<option value="">Selecione...</option>'; // Limpa o "Carregando"
-                configuracoes.condicoes.forEach(condicao => {
-                    let option = document.createElement('option');
-                    option.value = condicao;
-                    option.textContent = condicao;
-                    selectCondicao.appendChild(option);
-                });
+            const status = document.getElementById('upload-status');
+            status.textContent = '🤖 Lendo prancheta com IA... Aguarde.';
+            status.style.color = '#F2A900';
 
-                // Some com a tela de carregamento
-                document.getElementById('loading-overlay').style.display = 'none';
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = async function() {
+                fotoBase64 = reader.result.split(',')[1];
+                fotoMime = file.type;
 
-            } catch (error) {
-                document.getElementById('loading-overlay').innerHTML = '<p style="color:red; font-weight:bold;">Erro ao conectar com a Planilha. Recarregue a página.</p>';
+                const formData = new FormData();
+                formData.append('acao', 'extrair_ia');
+                formData.append('imagemBase64', fotoBase64);
+                formData.append('mimeType', fotoMime);
+
+                try {
+                    const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                    const json = await res.json();
+                    
+                    if(json.status === 'sucesso') {
+                        if(json.dados.numero) document.getElementById('numero').value = json.dados.numero;
+                        if(json.dados.cliente) document.getElementById('cliente').value = json.dados.cliente;
+                        if(json.dados.telefone) document.getElementById('telefone').value = json.dados.telefone;
+                        if(json.dados.cpf_cnpj) document.getElementById('cpf_cnpj').value = json.dados.cpf_cnpj;
+                        if(json.dados.servico) document.getElementById('servico').value = json.dados.servico;
+                        if(json.dados.valor) document.getElementById('valor').value = json.dados.valor;
+                        
+                        status.textContent = '✅ Dados extraídos! Confira abaixo.';
+                        status.style.color = '#2E7D32';
+                    }
+                } catch(error) {
+                    status.textContent = '❌ Erro ao ler a imagem.';
+                    status.style.color = '#C62828';
+                }
             }
-        };
+        });
 
-        // Função que salva os dados
         document.getElementById('form-servico').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
-            const mensagem = document.getElementById('mensagem');
-
-            btn.disabled = true;
-            btn.textContent = 'Processando...';
+            const msg = document.getElementById('mensagem');
             
+            btn.disabled = true; btn.textContent = '⏳ Salvando...';
+
             const formData = new FormData();
+            formData.append('acao', 'salvar');
             formData.append('numero', document.getElementById('numero').value);
             formData.append('cliente', document.getElementById('cliente').value);
+            formData.append('telefone', document.getElementById('telefone').value);
+            formData.append('cpf_cnpj', document.getElementById('cpf_cnpj').value);
             formData.append('servico', document.getElementById('servico').value);
             formData.append('valor', document.getElementById('valor').value);
             formData.append('condicao', document.getElementById('condicao').value);
+            
+            if(fotoBase64) {
+                formData.append('imagemBase64', fotoBase64);
+                formData.append('mimeType', fotoMime);
+            }
 
             try {
-                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-                const result = await response.json();
-
-                if(result.status === 'sucesso') {
-                    mensagem.textContent = 'Salvo com sucesso!';
-                    mensagem.className = 'alert success';
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                const json = await res.json();
+                if(json.status === 'sucesso') {
+                    msg.textContent = '✅ Salvo com sucesso!';
+                    msg.style.color = '#2E7D32';
                     document.getElementById('form-servico').reset();
-                } else {
-                    throw new Error(result.mensagem);
+                    fotoBase64 = null; fotoMime = null;
+                    document.getElementById('upload-status').textContent = 'Clique para selecionar e preencher com IA';
+                    document.getElementById('upload-status').style.color = '#666';
                 }
-            } catch (error) {
-                mensagem.textContent = 'Erro ao salvar. Tente novamente.';
-                mensagem.className = 'alert error';
+            } catch(err) {
+                msg.textContent = '❌ Erro ao salvar.';
+                msg.style.color = '#C62828';
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Salvar Registro no Banco de Dados';
-                setTimeout(() => { mensagem.style.display = 'none'; }, 4000);
+                btn.disabled = false; btn.textContent = '💾 2. Salvar no Banco e no Drive';
+                setTimeout(()=> msg.textContent='', 4000);
             }
         });
+
+        async function buscarGarantia() {
+            const termo = document.getElementById('termo-busca').value;
+            const container = document.getElementById('resultados-busca');
+            if(!termo) return;
+
+            container.innerHTML = '<p>Buscando...</p>';
+
+            try {
+                const res = await fetch(SCRIPT_URL + '?acao=buscar&termo=' + encodeURIComponent(termo));
+                const dados = await res.json();
+
+                if(dados.length === 0) {
+                    container.innerHTML = '<p style="color:red;">Nenhum registro encontrado.</p>';
+                    return;
+                }
+
+                container.innerHTML = '';
+                dados.forEach(item => {
+                    const dataParts = item.data.split(' ')[0].split('/');
+                    const dataServico = new Date(`${dataParts[2]}-${dataParts[1]}-${dataParts[0]}T00:00:00`); 
+                    const hoje = new Date();
+                    const dias = Math.floor((hoje - dataServico) / (1000 * 60 * 60 * 24));
+                    let tempoStr = dias + " dias atrás";
+                    if(dias > 30) tempoStr = Math.floor(dias/30) + " meses atrás";
+
+                    let btnFotoHTML = item.foto ? `<a href="${item.foto}" target="_blank" class="btn-foto">Ver Foto da OS</a>` : `<span style="font-size:0.8rem;color:#999;">Sem foto</span>`;
+
+                    container.innerHTML += `
+                        <div class="history-card">
+                            <div class="history-info">
+                                <strong>OS: ${item.numero} | Cliente: ${item.cliente}</strong>
+                                <p><strong>Serviço:</strong> ${item.servico}</p>
+                                <p><strong>Data:</strong> ${item.data.split(' ')[0]} <span class="badge-tempo">${tempoStr}</span></p>
+                                <p><strong>Tel:</strong> ${item.telefone} | <strong>Doc:</strong> ${item.cpf_cnpj}</p>
+                            </div>
+                            <div>
+                                ${btnFotoHTML}
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch(e) {
+                container.innerHTML = '<p style="color:red;">Erro ao buscar dados.</p>';
+            }
+        }
     </script>
 </body>
 </html>
