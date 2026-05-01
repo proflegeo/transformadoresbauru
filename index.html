@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-width=1.0">
+    <title>Gestão de Serviços | Transformadores Bauru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0F4C81; /* Azul Industrial */
+            --secondary-color: #F2A900; /* Amarelo Energia */
+            --bg-color: #F4F7F6;
+            --surface-color: #FFFFFF;
+            --text-main: #333333;
+            --text-light: #666666;
+            --border-color: #E0E0E0;
+            --success-color: #2E7D32;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+
+        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        
+        header h1 { font-size: 1.5rem; font-weight: 600; letter-spacing: 0.5px; }
+        header span { color: var(--secondary-color); font-weight: 700; }
+
+        .container { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; display: grid; grid-template-columns: 1fr; gap: 2rem; width: 100%; }
+
+        .card { background: var(--surface-color); border-radius: 12px; padding: 2rem; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-top: 4px solid var(--secondary-color); }
+
+        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--primary-color); }
+
+        .form-group { margin-bottom: 1.25rem; }
+        
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-main); }
+        
+        input, select, textarea { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; transition: border-color 0.3s; background-color: #FAFAFA; }
+        
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+        button { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background-color 0.3s; margin-top: 1rem; }
+        
+        button:hover { background-color: #0c3e69; }
+        button:disabled { background-color: #9fb3c4; cursor: not-allowed; }
+
+        .alert { display: none; padding: 1rem; border-radius: 6px; margin-top: 1rem; font-weight: 500; text-align: center; }
+        .alert.success { display: block; background-color: #E8F5E9; color: var(--success-color); border: 1px solid #C8E6C9; }
+        .alert.error { display: block; background-color: #FFEBEE; color: #C62828; border: 1px solid #FFCDD2; }
+
+        /* Loader */
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--secondary-color); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-right: 8px; display: none; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Transformadores<span>Bauru</span></h1>
+        <p>Painel Administrativo</p>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Novo Orçamento / Serviço</h2>
+            <form id="form-servico">
+                
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="numero">Número do Pedido</label>
+                        <input type="text" id="numero" name="numero" placeholder="Ex: ORC-1001" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="cliente">Nome do Cliente / Empresa</label>
+                        <input type="text" id="cliente" name="cliente" placeholder="Ex: Indústria XYZ" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="servico">Descrição do Serviço</label>
+                    <textarea id="servico" name="servico" rows="3" placeholder="Ex: Manutenção preventiva de transformador 500kVA..." required></textarea>
+                </div>
+
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="valor">Valor (R$)</label>
+                        <input type="number" step="0.01" id="valor" name="valor" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="condicao">Condição de Pagamento</label>
+                        <select id="condicao" name="condicao" required>
+                            <option value="">Selecione...</option>
+                            <option value="À Vista">À Vista (Pix/Dinheiro)</option>
+                            <option value="Boleto 30/60 dias">Boleto 30/60 dias</option>
+                            <option value="Cartão de Crédito">Cartão de Crédito</option>
+                            <option value="Permuta/Outros">Permuta / Outros</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-submit">
+                    <span class="loader" id="loader"></span>
+                    <span id="btn-text">Registrar no Sistema</span>
+                </button>
+
+                <div id="mensagem" class="alert"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // URL do Google Apps Script inserida aqui
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4YPjf5FcT41x3hQnJQVvitLnuqi16S5NtcMYt0KWsS_Mtzi9ZANkeg3j6-asIhm8/exec'; 
+
+        document.getElementById('form-servico').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('btn-submit');
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btn-text');
+            const mensagem = document.getElementById('mensagem');
+
+            // Feedback visual de carregamento
+            btn.disabled = true;
+            loader.style.display = 'inline-block';
+            btnText.textContent = 'Processando...';
+            mensagem.className = 'alert';
+            mensagem.textContent = '';
+
+            // Coleta dos dados
+            const formData = new FormData();
+            formData.append('numero', document.getElementById('numero').value);
+            formData.append('cliente', document.getElementById('cliente').value);
+            formData.append('servico', document.getElementById('servico').value);
+            formData.append('valor', document.getElementById('valor').value);
+            formData.append('condicao', document.getElementById('condicao').value);
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if(result.status === 'sucesso') {
+                    mensagem.textContent = 'Serviço registrado com sucesso!';
+                    mensagem.className = 'alert success';
+                    document.getElementById('form-servico').reset();
+                } else {
+                    throw new Error('Erro ao salvar.');
+                }
+            } catch (error) {
+                mensagem.textContent = 'Erro ao conectar com o servidor. Tente novamente.';
+                mensagem.className = 'alert error';
+            } finally {
+                // Restaura o botão
+                btn.disabled = false;
+                loader.style.display = 'none';
+                btnText.textContent = 'Registrar no Sistema';
+                
+                // Oculta a mensagem de sucesso após 5 segundos
+                setTimeout(() => {
+                    if(mensagem.classList.contains('success')) {
+                        mensagem.className = 'alert';
+                    }
+                }, 5000);
+            }
+        });
+    </script>
+</body>
+</html>
