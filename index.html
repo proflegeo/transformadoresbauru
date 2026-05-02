@@ -2,46 +2,64 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-width=1.0">
-    <title>Sistema de Gestão | Transformadores Bauru</title>
+    <!-- Ajuste perfeito de zoom para celulares -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- Transforma em App de Tela Cheia (PWA) no iOS e Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0F4C81">
+    
+    <title>OS | Transformadores Bauru</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root { --primary-color: #0F4C81; --secondary-color: #F2A900; --bg-color: #F4F7F6; --surface-color: #FFFFFF; --text-main: #333333; --border-color: #E0E0E0; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
         
-        header { background-color: var(--primary-color); color: white; padding: 1.5rem 2rem; }
-        .header-content { display: flex; justify-content: space-between; align-items: center; max-width: 1000px; margin: 0 auto; width: 100%; }
-        header h1 { font-size: 1.5rem; font-weight: 600; }
+        header { background-color: var(--primary-color); color: white; padding: 1.5rem 1rem; }
+        .header-content { display: flex; justify-content: center; align-items: center; max-width: 1000px; margin: 0 auto; width: 100%; text-align: center; }
+        header h1 { font-size: 1.4rem; font-weight: 600; }
         header span { color: var(--secondary-color); font-weight: 700; }
 
-        .tabs { display: flex; gap: 1rem; max-width: 1000px; margin: 0 auto; width: 100%; padding: 1rem 1rem 0; }
-        .tab-btn { background: #e0e7ec; color: var(--primary-color); border: none; padding: 0.75rem 1.5rem; font-size: 1rem; font-weight: 600; cursor: pointer; border-radius: 8px 8px 0 0; }
+        .tabs { display: flex; gap: 0.5rem; max-width: 1000px; margin: 0 auto; width: 100%; padding: 1rem 1rem 0; overflow-x: auto; }
+        .tab-btn { background: #e0e7ec; color: var(--primary-color); border: none; padding: 0.75rem 1rem; font-size: 0.9rem; font-weight: 600; cursor: pointer; border-radius: 8px 8px 0 0; white-space: nowrap; flex: 1; }
         .tab-btn.active { background: var(--surface-color); color: var(--primary-color); border-top: 3px solid var(--secondary-color); }
 
         .container { max-width: 1000px; margin: 0 auto 2rem; padding: 0 1rem; width: 100%; }
-        .tab-content { display: none; background: var(--surface-color); padding: 2rem; border-radius: 0 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .tab-content { display: none; background: var(--surface-color); padding: 1.5rem; border-radius: 0 8px 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .tab-content.active { display: block; }
         
-        .form-group { margin-bottom: 1.25rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
-        input, select { width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 1rem; background-color: #FAFAFA; transition: 0.3s; }
-        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.4rem; font-weight: 600; font-size: 0.85rem; color: #444; }
+        input, select { width: 100%; padding: 0.85rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background-color: #FAFAFA; transition: 0.3s; }
+        input:focus, select:focus { outline: none; border-color: var(--primary-color); background-color: #FFF; box-shadow: 0 0 0 3px rgba(15,76,129,0.1); }
+        
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
 
-        .upload-area { border: 2px dashed var(--primary-color); padding: 2rem; text-align: center; border-radius: 8px; cursor: pointer; background: #f8fbff; margin-bottom: 1.5rem; }
+        .upload-area { border: 2px dashed var(--primary-color); padding: 2rem 1rem; text-align: center; border-radius: 8px; cursor: pointer; background: #f8fbff; margin-bottom: 1.5rem; display: block; transition: 0.3s; }
         .upload-area input { display: none; }
-        .upload-area:hover { background: #eef5ff; }
+        .upload-area:active { background: #eef5ff; transform: scale(0.98); }
 
-        button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; width: 100%; transition: background 0.3s; }
-        button.btn-primary:hover { background-color: #0c3e69; }
-        button:disabled { background-color: #9fb3c4; cursor: not-allowed; }
+        button.btn-primary { background-color: var(--primary-color); color: white; border: none; padding: 1.2rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s; box-shadow: 0 4px 6px rgba(15,76,129,0.2); }
+        button.btn-primary:active { transform: scale(0.98); }
+        button:disabled { background-color: #9fb3c4; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .search-bar { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .search-bar { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.5rem; }
         .history-card { border: 1px solid var(--border-color); border-left: 4px solid var(--secondary-color); padding: 1rem; border-radius: 6px; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; }
-        .history-info p { margin-bottom: 0.3rem; font-size: 0.9rem; }
-        .badge-tempo { background: #E8F5E9; color: #2E7D32; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.8rem; font-weight: bold; }
-        .btn-foto { background: var(--secondary-color); color: #000; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; }
+        .btn-foto { background: var(--secondary-color); color: #000; padding: 0.5rem 1rem; text-decoration: none; border-radius: 4px; font-weight: 600; font-size: 0.9rem; display: inline-block; text-align: center; }
+
+        /* Media Query: Responsividade para Celulares */
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; gap: 0.5rem; } 
+            .history-card { padding: 1rem !important; flex-direction: column; gap: 10px; }
+            .history-card > div { width: 100%; }
+            .history-card h3 { font-size: 1.1rem !important; }
+            .search-bar { flex-direction: column; }
+            .search-bar button { width: 100% !important; }
+            .btn-foto { width: 100%; margin-top: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -62,15 +80,16 @@
         <div id="aba-registro" class="tab-content active">
             <label class="upload-area" id="upload-label">
                 <h3 style="color: var(--primary-color);">📸 1. Anexar Foto da OS</h3>
-                <p id="upload-status" style="margin-top: 0.5rem; color: #666;">Clique para selecionar e preencher com IA</p>
-                <input type="file" id="foto-os" accept="image/*">
+                <p id="upload-status" style="margin-top: 0.5rem; color: #666;">Toque para selecionar a foto e preencher com IA</p>
+                <!-- O accept="image/*" com capture="environment" abre a câmera direto no celular -->
+                <input type="file" id="foto-os" accept="image/*" capture="environment">
             </label>
 
             <form id="form-servico">
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Número do Pedido (OS)</label>
-                        <input type="text" id="numero" required maxlength="4" pattern="\d{4}" title="Digite exatamente 4 números" placeholder="Ex: 1005">
+                        <input type="text" id="numero" required maxlength="10" placeholder="Ex: 1005 ou 26-001">
                     </div>
                     <div class="form-group">
                         <label>Cliente / Empresa</label>
@@ -98,8 +117,7 @@
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Valor (R$)</label>
-                        <!-- Atualizado: Mudou de 'number' para 'text' para aceitar a vírgula financeira -->
-                        <input type="text" id="valor" required placeholder="0,00">
+                        <input type="text" id="valor" required placeholder="0,00" inputmode="numeric">
                     </div>
                     <div class="form-group">
                         <label>Condição de Pagamento</label>
@@ -126,20 +144,32 @@
     </div>
 
     <script>
-        // COLOQUE SUA URL AQUI
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzIh-9qbZZmXhh0DNuoeu3QETE3Lxb0-OpFescqNm5WhqgS5ZHayhPuhzDL6edk2No/exec'; 
+        // O SEU NOVO LINK DO GOOGLE APPS SCRIPT
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyghnWj-5-C1z60uLFnkJpXjx1ytnmhE8IjTd_TMI_2mJ7qH5qWVvn0TtNjjXD4ni0k/exec'; 
+
+        // Permite apertar a tecla "Enter" para pesquisar
+        document.getElementById('termo-busca').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault(); 
+                buscarGarantia();
+            }
+        });
 
         let fotoBase64 = null;
         let fotoMime = null;
 
-        // --- MÁSCARAS ---
-        document.getElementById('numero').addEventListener('input', function(e) { this.value = this.value.replace(/\D/g, '').substring(0, 4); });
+        // --- MÁSCARAS INTELIGENTES ---
+        document.getElementById('numero').addEventListener('input', function(e) { 
+            this.value = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, ''); 
+        });
+        
         document.getElementById('telefone').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, '');
             value = value.replace(/^(\d{2})(\d)/g, '($1) $2');
             value = value.replace(/(\d)(\d{4})$/, '$1-$2');
             e.target.value = value;
         });
+        
         document.getElementById('cpf_cnpj').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, ''); 
             if (value.length <= 11) {
@@ -149,6 +179,7 @@
             }
             e.target.value = value.substring(0, 18);
         });
+        
         document.getElementById('valor').addEventListener('input', function(e) {
             let value = e.target.value.replace(/\D/g, ''); 
             if (value === '') { e.target.value = ''; return; }
@@ -177,50 +208,77 @@
             } catch(e) {}
         }
 
+        // LÓGICA DE COMPRESSÃO E IA
         document.getElementById('foto-os').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if(!file) return;
 
             const status = document.getElementById('upload-status');
-            status.textContent = '🤖 Lendo prancheta com IA... Aguarde.';
+            status.textContent = '⚙️ Otimizando foto...';
             status.style.color = '#F2A900';
 
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = async function() {
-                fotoBase64 = reader.result.split(',')[1];
-                fotoMime = file.type;
-
-                const formData = new FormData();
-                formData.append('acao', 'extrair_ia');
-                formData.append('imagemBase64', fotoBase64);
-                formData.append('mimeType', fotoMime);
-
-                try {
-                    const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
-                    const json = await res.json();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                img.onload = async function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
                     
-                    if(json.status === 'sucesso') {
-                        if(json.dados.numero) { document.getElementById('numero').value = json.dados.numero; document.getElementById('numero').dispatchEvent(new Event('input')); }
-                        if(json.dados.cliente) { document.getElementById('cliente').value = json.dados.cliente; }
-                        if(json.dados.telefone) { document.getElementById('telefone').value = json.dados.telefone; document.getElementById('telefone').dispatchEvent(new Event('input')); }
-                        if(json.dados.cpf_cnpj) { document.getElementById('cpf_cnpj').value = json.dados.cpf_cnpj; document.getElementById('cpf_cnpj').dispatchEvent(new Event('input')); }
-                        if(json.dados.servico) { document.getElementById('servico').value = json.dados.servico; }
-                        if(json.dados.valor) { 
-                            let valStr = parseFloat(json.dados.valor).toFixed(2).replace('.', ''); 
-                            document.getElementById('valor').value = valStr; 
-                            document.getElementById('valor').dispatchEvent(new Event('input')); 
-                        }
-                        status.textContent = '✅ Dados extraídos! Confira abaixo.';
-                        status.style.color = '#2E7D32';
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+                    } else {
+                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
                     }
-                } catch(error) {
-                    status.textContent = '❌ Erro ao ler a imagem.';
-                    status.style.color = '#C62828';
+                    
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx.drawImage(img, 0, 0, width, height);
+                    
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    fotoBase64 = dataUrl.split(',')[1];
+                    fotoMime = 'image/jpeg';
+
+                    status.textContent = '🤖 Lendo prancheta com IA... Aguarde.';
+
+                    const formData = new FormData();
+                    formData.append('acao', 'extrair_ia');
+                    formData.append('imagemBase64', fotoBase64);
+                    formData.append('mimeType', fotoMime);
+
+                    try {
+                        const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
+                        const json = await res.json();
+                        
+                        if(json.status === 'sucesso') {
+                            if(json.dados.numero) { document.getElementById('numero').value = json.dados.numero; document.getElementById('numero').dispatchEvent(new Event('input')); }
+                            if(json.dados.cliente) { document.getElementById('cliente').value = json.dados.cliente; }
+                            if(json.dados.telefone) { document.getElementById('telefone').value = json.dados.telefone; document.getElementById('telefone').dispatchEvent(new Event('input')); }
+                            if(json.dados.cpf_cnpj) { document.getElementById('cpf_cnpj').value = json.dados.cpf_cnpj; document.getElementById('cpf_cnpj').dispatchEvent(new Event('input')); }
+                            if(json.dados.servico) { document.getElementById('servico').value = json.dados.servico; }
+                            if(json.dados.valor) { 
+                                let valStr = parseFloat(json.dados.valor).toFixed(2).replace('.', ''); 
+                                document.getElementById('valor').value = valStr; 
+                                document.getElementById('valor').dispatchEvent(new Event('input')); 
+                            }
+                            status.textContent = '✅ Dados extraídos! Confira abaixo.';
+                            status.style.color = '#2E7D32';
+                        }
+                    } catch(error) {
+                        status.textContent = '❌ Erro ao ler a imagem.';
+                        status.style.color = '#C62828';
+                    }
                 }
             }
         });
 
+        // SALVAR DADOS
         document.getElementById('form-servico').addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-submit');
@@ -250,16 +308,15 @@
                 const res = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const json = await res.json();
                 
-                // Trata o erro de OS duplicada vindo do Servidor
                 if(json.status === 'sucesso') {
                     msg.textContent = json.mensagem;
                     msg.style.color = '#2E7D32';
                     document.getElementById('form-servico').reset();
                     fotoBase64 = null; fotoMime = null;
-                    document.getElementById('upload-status').textContent = 'Clique para selecionar e preencher com IA';
+                    document.getElementById('upload-status').textContent = 'Toque para selecionar a foto e preencher com IA';
                     document.getElementById('upload-status').style.color = '#666';
                 } else {
-                    msg.textContent = json.mensagem; // Exibe: "⚠️ Esta OS já está cadastrada!"
+                    msg.textContent = json.mensagem; 
                     msg.style.color = '#C62828';
                 }
             } catch(err) {
@@ -267,11 +324,11 @@
                 msg.style.color = '#C62828';
             } finally {
                 btn.disabled = false; btn.textContent = '💾 2. Salvar no Banco e no Drive';
-                // Aumentei o tempo da mensagem para 6 segundos para dar tempo de ler o erro
                 setTimeout(()=> msg.textContent='', 6000); 
             }
         });
 
+        // BUSCAR DADOS
         async function buscarGarantia() {
             const termo = document.getElementById('termo-busca').value;
             const container = document.getElementById('resultados-busca');
@@ -290,7 +347,6 @@
 
                 container.innerHTML = `<p style="margin-bottom: 1rem; color: #666;">Encontrados <strong>${dados.length}</strong> resultados:</p>`;
                 
-                // Inverte a ordem para mostrar os mais recentes primeiro
                 dados.reverse().forEach(item => {
                     let dataServico;
                     if (item.data.includes('T')) {
@@ -317,15 +373,15 @@
 
                     container.innerHTML += `
                         <div class="history-card" style="display: flex; flex-direction: column; gap: 15px; background: #fff; padding: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; flex-wrap: wrap;">
                                 <div>
                                     <h3 style="color: var(--primary-color); margin-bottom: 5px; font-size: 1.2rem;">OS: ${item.numero} | ${item.cliente}</h3>
                                     <span style="font-size: 0.95rem; color: #555;">Realizado em: <strong>${dataFormatada}</strong> (${tempoStr})</span>
                                     ${badgeGarantia}
                                 </div>
-                                <div>${btnFotoHTML}</div>
+                                <div style="margin-top: 10px;">${btnFotoHTML}</div>
                             </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.95rem; color: #333;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 0.95rem; color: #333;" class="grid-2">
                                 <div>
                                     <p style="margin-bottom: 5px;"><span style="color:#666;">Serviço:</span> <strong>${item.servico}</strong></p>
                                     <p style="margin-bottom: 5px;"><span style="color:#666;">Valor Pago:</span> <strong>R$ ${parseFloat(item.valor).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</strong></p>
